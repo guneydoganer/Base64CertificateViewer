@@ -53,7 +53,15 @@ function getFullFormatedDate (dateAsString) {
   return getHumanReadableDate(getUtcDate(dateAsString)) + ' [' + getUtcDate(dateAsString) + ']'
 }
 
-function getShaFingerprint (myCertificate, hashAlgorithm) {
+function getShaFingerprintLower (myCertificate, hashAlgorithm) {
+  var asn1 = forge.pki.certificateToAsn1(myCertificate)
+  var der = forge.asn1.toDer(asn1)
+  var md = forge.md[hashAlgorithm].create()
+  md.update(der.data)
+  return md.digest().toHex().toLowerCase()
+}
+
+function getShaFingerprintUpper (myCertificate, hashAlgorithm) {
   var asn1 = forge.pki.certificateToAsn1(myCertificate)
   var der = forge.asn1.toDer(asn1)
   var md = forge.md[hashAlgorithm].create()
@@ -75,8 +83,10 @@ function getCertificate (source) {
   const issuer = issuerCommonName + ', ' + issuerOrganization
   const validFrom = getFullFormatedDate(myCertificate.validity.notBefore)
   const validTo = getFullFormatedDate(myCertificate.validity.notAfter)
-  const sha1fingerprint = getShaFingerprint(myCertificate, 'sha1')
-  const sha256fingerprint = getShaFingerprint(myCertificate, 'sha256')
+  const sha1fingerprintl = getShaFingerprintLower(myCertificate, 'sha1')
+  const sha1fingerprintu = getShaFingerprintUpper(myCertificate, 'sha1')
+  const sha256fingerprintl = getShaFingerprintLower(myCertificate, 'sha256')
+  const sha256fingerprintu = getShaFingerprintUpper(myCertificate, 'sha256')
 
   const certData = {
     commonName: subjectCommonName,
@@ -85,8 +95,10 @@ function getCertificate (source) {
     issuer: issuer,
     validFrom: validFrom,
     validTo: validTo,
-    sha1fingerprint: sha1fingerprint,
-    sha256fingerprint: sha256fingerprint,
+    sha1fingerprintl: sha1fingerprintl,
+    sha1fingerprintu: sha1fingerprintu,
+    sha256fingerprintl: sha256fingerprintl,
+    sha256fingerprintu: sha256fingerprintu,
     toString: function () {
       return `Common name: ${subjectCommonName}
 Organization: ${subjectOrganization}
@@ -94,8 +106,10 @@ Issuer: ${issuer}
 Serial Number: ${myCertificate.serialNumber}
 Valid From: ${validFrom}
 Valid To: ${validTo}
-SHA1: ${sha1fingerprint}
-SHA256: ${sha256fingerprint}`
+SHA1 Lowercase: ${sha1fingerprintl}
+SHA1 Uppercase: ${sha1fingerprintu}
+SHA256 Lowercase: ${sha256fingerprintl}
+SHA256 Uppercase: ${sha256fingerprintu}`
     }
   }
 

@@ -19,8 +19,10 @@ function populateCertificate (certificateData) {
     appendItemToList('Serial Number:', certificateData.serialNumber, content)
     appendItemToList('Valid From:', certificateData.validFrom, content)
     appendItemToList('Valid To:', certificateData.validTo, content)
-    appendItemToList('SHA1:', certificateData.sha1fingerprint, content)
-    appendItemToList('SHA256:', certificateData.sha256fingerprint, content)
+    appendItemToList('SHA1 Lowercase:', certificateData.sha1fingerprintl, content)
+    appendItemToList('SHA1 Uppercase:', certificateData.sha1fingerprintu, content)
+    appendItemToList('SHA256 Lowercase:', certificateData.sha256fingerprintl, content)
+    appendItemToList('SHA256 Uppercase:', certificateData.sha256fingerprintu, content)
   }
 }
 
